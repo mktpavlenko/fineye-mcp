@@ -1,0 +1,24 @@
+name: CI
+on:
+  push: { branches: ['**'] }
+  pull_request:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 } # gitleaks scans history, not just the tip
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run format:check
+      # build BEFORE test: the integration tests spawn dist/index.js and skip themselves when it
+      # is absent, so running them first would silently drop the only coverage of src/index.ts.
+      - run: npm run build
+      - run: npm test
+      # The Supabase anon key is public by design and allowlisted in gitleaks.toml; anything
+      # else that looks like a credential should fail the build, not ship.
+      - uses: gitleaks/gitleaks-action@v2
+        env: { GITLEAKS_CONFIG: gitleaks.toml }

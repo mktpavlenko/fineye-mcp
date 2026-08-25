@@ -1,0 +1,14 @@
+# gitleaks config for fineye-cli.
+# Run: gitleaks dir . --config gitleaks.toml   (or `gitleaks detect` for git history)
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Public-by-design values: the Supabase anon/publishable key is shipped in the FinEye app bundle and is required for the client to work — it is NOT a secret."
+regexes = [
+  '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpwZGxnZ2xjdWN5b3FveHJpaHly''',
+]
+paths = [
+  '''dist/''',
+  '''package-lock\.json''',
+]

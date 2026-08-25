@@ -1,0 +1,6 @@
+node_modules/
+*.log
+session.json
+.config/
+recon-secrets/
+dist/
